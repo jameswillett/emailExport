@@ -6,18 +6,49 @@ function onOpen() {
 function exportAllSheets() {
   //gets your whole spreadsheet
   var sheets = SpreadsheetApp.getActive().getSheets();
-  sheets[0].getRange(1,4).setValue(new Date()); //last ran:
-  sheets[0].getRange(2,4).setValue(sheets[0].getRange(1,1).getValue()); //for week of:
-  sheets[0].getRange(3,4).setValue(Session.getActiveUser()); //by
+  var now = new Date();
+  var weekOf = new Date(sheets[0].getRange(1,1).getValue());
+  var by = Session.getActiveUser();
+
+  var ui = SpreadsheetApp.getUi();
+
+  var checkI = 20;
+  var check = true;
+  var runDates = [];
+
+  while(check){
+    if(!sheets[0].getRange(checkI, 6).isBlank()){
+      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()));
+      checkI++;
+
+    } else {
+      check = false;
+    }
+  }
+
+  for(var i = 0; i < runDates.length; i++){
+    if(runDates[i].toString() == weekOf.toString()){
+      var response = ui.alert('uh-oh...','Looks like i was already ran for the week of ' + weekOf.toLocaleDateString("en-US") + '. Do you want to proceed?', ui.ButtonSet.YES_NO)
+      if (response == ui.Button.YES) {
+        break;
+      } else if(response == ui.Button.NO) {
+        return;
+      }
+    }
+  }
+
+  sheets[0].getRange(1,4).setValue(now); //last ran:
+  sheets[0].getRange(2,4).setValue(weekOf); //for week of:
+  sheets[0].getRange(3,4).setValue(by); //by
 
   var historyI = 20; //starts looking at row 20
   var running = true;
 
   while(running){
     if(sheets[0].getRange(historyI,6).isBlank()){ //if Col E row (starting at) 20 is blank
-      sheets[0].getRange(historyI,6).setValue(new Date()); // add some stuff
-      sheets[0].getRange(historyI,7).setValue(sheets[0].getRange(1,1).getValue());
-      sheets[0].getRange(historyI,8).setValue(Session.getActiveUser());
+      sheets[0].getRange(historyI,6).setValue(now); // add some stuff
+      sheets[0].getRange(historyI,7).setValue(weekOf);
+      sheets[0].getRange(historyI,8).setValue(by);
       running = false;
     } else {
       historyI++; //else move down
@@ -107,7 +138,7 @@ function exportSingleSheet() {
 
   newSpreadsheet.getSheetByName('Sheet1').activate();
   newSpreadsheet.deleteActiveSheet();
-
+  
   var sourceRange = sheet.getRange(1, 1, 45, 6);
   var sourcevalues = sourceRange.getValues();
 
