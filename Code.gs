@@ -6,32 +6,37 @@ function onOpen() {
 function exportAllSheets() {
   //gets your whole spreadsheet
   var sheets = SpreadsheetApp.getActive().getSheets();
+
+  //run vars
   var now = new Date();
   var weekOf = new Date(sheets[0].getRange(1,1).getValue());
   var by = Session.getActiveUser();
 
   var ui = SpreadsheetApp.getUi();
 
+  //history check vars
   var checkI = 20;
   var check = true;
   var runDates = [];
 
+  //adds "weekOf" vars in history to runDates array
   while(check){
-    if(!sheets[0].getRange(checkI, 6).isBlank()){
-      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()).toLocaleDateString("en-US"));
+    if(!sheets[0].getRange(checkI, 6).isBlank()){ //if cell is blank
+      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()).toLocaleDateString("en-US")); //do stuff
       checkI++;
-
-    } else {
+    } else { //else stop doing stuff
       check = false;
     }
   }
-
-  if(runDates.indexOf(weekOf.toLocaleDateString("en-US")) != -1){
-    var response = ui.alert('uh-oh...','Looks like I was already ran for the week of ' + weekOf.toLocaleDateString("en-US") + '. Do you want to proceed?', ui.ButtonSet.YES_NO)
-    if (response == ui.Button.NO) {
-      return;
+  //checks array for weekOf currently selected
+  if(runDates.indexOf(weekOf.toLocaleDateString("en-US")) != -1){ //if selected weekOf is in array
+    var response = ui.alert('uh-oh...','Looks like I was already ran for the week of ' + weekOf.toLocaleDateString("en-US") + '. Do you want to proceed?', ui.ButtonSet.YES_NO) //ask this question
+    if (response == ui.Button.NO) { //if they click no
+      return; //return on function (dont do anything)
     }
   }
+
+  //hitting yes continues functio
 
   sheets[0].getRange(1,4).setValue(now); //last ran:
   sheets[0].getRange(2,4).setValue(weekOf); //for week of:
