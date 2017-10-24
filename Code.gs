@@ -1,3 +1,5 @@
+
+//adds admin menu to google sheets project
 function onOpen() {
   var submenu = [{name:"Send ALL Invoices!", functionName:"exportAllSheets"},{name:"Send Just Active Invoice!", functionName:"exportSingleSheet"}];
   SpreadsheetApp.getActiveSpreadsheet().addMenu('Project Admin', submenu);
@@ -12,6 +14,7 @@ function exportAllSheets() {
   var weekOf = new Date(sheets[0].getRange(1,1).getValue());
   var by = Session.getActiveUser();
 
+  //shortens ui method name
   var ui = SpreadsheetApp.getUi();
 
   //history check vars
@@ -21,10 +24,10 @@ function exportAllSheets() {
 
   //adds "weekOf" vars in history to runDates array
   while(check){
-    if(!sheets[0].getRange(checkI, 6).isBlank()){ //if cell is blank
-      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()).toLocaleDateString("en-US")); //do stuff
+    if(!sheets[0].getRange(checkI, 6).isBlank()){ //if cell isnt blank
+      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()).toLocaleDateString("en-US")); //add that cell value to array
       checkI++;
-    } else { //else stop doing stuff
+    } else { //else stop looping
       check = false;
     }
   }
@@ -36,7 +39,7 @@ function exportAllSheets() {
     }
   }
 
-  //hitting yes continues functio
+  //hitting yes continues function
 
   sheets[0].getRange(1,4).setValue(now); //last ran:
   sheets[0].getRange(2,4).setValue(weekOf); //for week of:
