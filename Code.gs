@@ -18,7 +18,7 @@ function exportAllSheets() {
 
   while(check){
     if(!sheets[0].getRange(checkI, 6).isBlank()){
-      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()));
+      runDates.push(new Date(sheets[0].getRange(checkI, 7).getValue()).toLocaleDateString("en-US"));
       checkI++;
 
     } else {
@@ -26,14 +26,10 @@ function exportAllSheets() {
     }
   }
 
-  for(var i = 0; i < runDates.length; i++){
-    if(runDates[i].toString() == weekOf.toString()){
-      var response = ui.alert('uh-oh...','Looks like i was already ran for the week of ' + weekOf.toLocaleDateString("en-US") + '. Do you want to proceed?', ui.ButtonSet.YES_NO)
-      if (response == ui.Button.YES) {
-        break;
-      } else if(response == ui.Button.NO) {
-        return;
-      }
+  if(runDates.indexOf(weekOf.toLocaleDateString("en-US")) != -1){
+    var response = ui.alert('uh-oh...','Looks like I was already ran for the week of ' + weekOf.toLocaleDateString("en-US") + '. Do you want to proceed?', ui.ButtonSet.YES_NO)
+    if (response == ui.Button.NO) {
+      return;
     }
   }
 
@@ -54,8 +50,6 @@ function exportAllSheets() {
       historyI++; //else move down
     }
   }
-
-
 
   //loop through sheets/drivers (sheet[0] and sheet[1] we will never care about)
   for (var i = 2; i < sheets.length; i++){
@@ -138,7 +132,7 @@ function exportSingleSheet() {
 
   newSpreadsheet.getSheetByName('Sheet1').activate();
   newSpreadsheet.deleteActiveSheet();
-  
+
   var sourceRange = sheet.getRange(1, 1, 45, 6);
   var sourcevalues = sourceRange.getValues();
 
